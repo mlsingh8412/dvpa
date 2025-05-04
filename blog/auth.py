@@ -3,15 +3,21 @@ from flask import request, Response, session
 from blog import config
 from blog import db
 
-import hashlib
+from argon2 import PasswordHasher
 
 def check_auth(username, password):
     """ This function is called to check if a username / password
         combination is valid.
     """
     cur = db.connection.cursor()
-    hashsed_password = hashlib.md5(password.encode()).hexdigest()
-    cur.execute(f"SELECT * FROM users WHERE email='{username}' AND password='{hashsed_password}'")
+    ph = PasswordHasher()
+    try:
+        cur.execute(f"SELECT * FROM users WHERE email='{username}'")
+        user = cur.fetchone()
+        if user is None or not ph.verify(user.get("password"), password):
+            return False
+    except Exception:
+        return False
     user = cur.fetchone()
 
     if user is None:
