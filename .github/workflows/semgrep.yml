@@ -1,0 +1,35 @@
+name: Semgrep Scan
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  semgrep:
+    name: Run Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python (required for Semgrep CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Semgrep CLI
+        run: pip install semgrep
+
+      - name: Run Semgrep scan
+        run: semgrep scan --config=auto --sarif --output-format=text --output=semgrep.txt
+        continue-on-error: true
+
+      - name: Upload report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: semgrep.txt
+          retention-days: 7
