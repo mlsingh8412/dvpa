@@ -24,7 +24,7 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep scan
-        run: semgrep scan --confif=auto --json --json-output=semgrep.json
+        run: semgrep scan --config=auto --json --json-output=semgrep.json
         continue-on-error: true
 
       - name: Upload report as Artifact
