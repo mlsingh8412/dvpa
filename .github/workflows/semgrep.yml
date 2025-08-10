@@ -24,12 +24,12 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep scan
-        run: semgrep scan --help
+        run: semgrep scan --confif=auto --json --json-output=semgrep.json
         continue-on-error: true
 
       - name: Upload report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: semgrep.txt
+          path: semgrep.json
           retention-days: 7
